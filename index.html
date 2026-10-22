@@ -161,22 +161,5 @@ function closeService(){
  history.replaceState(null,"","#services");
  window.scrollTo({top:document.getElementById("services").offsetTop-20,behavior:"smooth"});
 }
-
-document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");activeCat=b.dataset.cat;render();}));
-function renderEditor(){
- document.getElementById("edit-list").innerHTML=services.map(s=>`<div class="edit-row" data-id="${s.id}"><div class="field edit-name"><label>اسم الخدمة</label><input data-k="name" value="${esc(s.name)}"></div><div class="field"><label>السعر (ج.م)</label><input data-k="price" type="number" min="0" value="${s.price}"></div><div class="field"><label>وحدة السعر</label><input data-k="unit" value="${esc(s.unit)}"></div></div>`).join("");
-}
-document.getElementById("save-settings").addEventListener("click",()=>{
- document.querySelectorAll(".edit-row").forEach(row=>{const s=services.find(x=>x.id===Number(row.dataset.id));row.querySelectorAll("input").forEach(i=>{if(i.dataset.k==="price")s.price=Math.max(0,Number(i.value)||0);else s[i.dataset.k]=i.value.trim()||s[i.dataset.k];});});
- whatsapp=document.getElementById("wa-number").value.replace(/\D/g,"");siteName=document.getElementById("site-name").value.trim()||"مصطفى طارق";
- try{localStorage.setItem("riayaPlusSettings",JSON.stringify({services,whatsapp,siteName}));}catch(e){}
- render();renderEditor();
-const initialMatch=location.hash.match(/^#service-(\\d+)$/);if(initialMatch)openService(Number(initialMatch[1]));document.getElementById("status").textContent="تم حفظ التعديلات في هذا المتصفح.";
-});
-document.getElementById("reset-settings").addEventListener("click",()=>{services=JSON.parse(JSON.stringify(defaults));renderEditor();render();document.getElementById("status").textContent="تمت استعادة الأسعار الافتراضية. اضغط حفظ التعديلات لتثبيتها.";});
-document.getElementById("export-settings").addEventListener("click",()=>{const blob=new Blob([JSON.stringify({siteName,whatsapp,services},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="riaya-plus-prices.json";a.click();URL.revokeObjectURL(a.href);});
-try{const saved=JSON.parse(localStorage.getItem("riayaPlusSettings"));if(saved){services=saved.services||services;whatsapp=saved.whatsapp||"";siteName=saved.siteName||siteName;document.getElementById("wa-number").value=whatsapp;document.getElementById("site-name").value=siteName;}}catch(e){}
-render();renderEditor();
-const initialMatch=location.hash.match(/^#service-(\\d+)$/);if(initialMatch)openService(Number(initialMatch[1]));
 </script>
 </body></html>
